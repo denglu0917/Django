@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load staticfile %}
+{% load staticfiles %}
 <html>
 
 <head>
@@ -16,26 +16,40 @@
     <div class="ui inverted top fixed menu borderless red menu">
         <div class="header item">
             <div class="ui image">
-                <img src="images/tenlogo.png" alt="">
+                <img src="{% static 'images/tenlogo.png'%}" alt="">
             </div>
         </div>
 
         <div class="right menu">
-            <div class="item">
-                <h5 class="ui inverted header">
-                        <div class="ui mini circular image">
-                            <img src="{% static 'images/hou30.jpg' %}" alt="">
-                        </div>
-
-                        <span>admin</span>
-
+            {% if request.user.is_authenticated %}
+                <div class="item">
+                    <h5 class="ui inverted header">
+                            <div class="ui mini circular image">
+                                {% if request.user.profile.profile_image %}
+                                    <img src="/upload/{{ request.user.profile.profile_image }}" alt="">
+                                {% else %}
+                                    <img src="{% static 'images/hou30.jpg' %}" alt="">
+                                {% endif %}
+                            </div>
+                            <span>{{ request.user.username }}</span>
+                        </h5>
+                </div>
+                <div class="item">
+                    <a href="{% url 'logout' %}" class="ui inverted circular button">Logout</a>
+                </div>
+            {% else %}
+                <div class="item">
+                    <h5 class="ui inverted header">
+                            <div class="ui mini circular image">
+                                <img src="{% static 'images/hou30.jpg' %}" alt="">
+                            </div>
                     </h5>
-            </div>
-            <div class="item">
+                </div>
+                <div class="item">
+                    <a href="{% url 'login'%}" class="ui inverted circular button">Register/Login</a>
+                </div>
+            {% endif %}
 
-                <a href="#logout/" class="ui inverted circular button">Logout</a>
-
-            </div>
         </div>
     </div>
     <div class="ui inverted segment container nav">
@@ -47,10 +61,16 @@
                         New
                     </a>
 
+            {% if 'editors' in request.path %}
+                <a class="active item" href="{% url 'index' %}editors">
+                    Editor's
+                </a>
+            {% else %}
+                <a class="item" href="{% url 'index' %}editors">
+                    Editor's
+                </a>
+            {% endif %}
 
-            <a class="active item" href="#list/editors">
-                        Editor's
-                    </a>
 
 
 
@@ -63,13 +83,18 @@
         <div class="ui three column grid">
             {% for article in article_list %}
                 <div class="column">
-                    <a class="ui fluid card" href="#detail/215">
+                    <a class="ui fluid card" href="{% url 'detail' article.id %}">
                         <div class="image">
-                            <img src="{{ article.img }}" alt="" style="height:200px;object-fit: cover;">
+                            {% if article.img_cover %}
+                                <img src="/upload/{{ article.img_cover }}" alt="" style="height:200px;object-fit: cover;">
+                            {% else %}
+                                <img src="{{ article.img }}" alt="" style="height:200px;object-fit: cover;">
+                            {% endif %}
+
                         </div>
                     </a>
 
-                    <div class="title header" href="/detail/215">
+                    <div class="title header" href="{% url 'detail' article.id %}">
                         {{article.title}}
                     </div>
 
@@ -93,14 +118,36 @@
 
     <div class="ui center aligned very padded vertical segment container">
         <div class="ui pagination menu">
+            {% if article_list.has_previous %}
+                <a href="?page={{ article_list.previous_page_number }}" class="item">
+                    <i class="icon red left arrow"></i>
+                </a>
+            {% else %}
+                <a href="?page={{ article_list.start_index }}" class="disabled item">
+                    <i class="icon left arrow"></i>
+                </a>
+            {% endif %}
+            {% for page_number in article_list.paginator.page_range %}
+                {% ifequal page_number article_list.number  %}
+                    <a href="?page={{ page_number }}" class="active item" style="background-color:red; color:white">
+                        {{ page_number }}
+                    </a>
+                {% else %}
+                    <a href="?page={{ page_number }}" class="item">
+                        {{ page_number }}
+                    </a>
+                {% endifequal %}
+            {% endfor %}
+            {% if article_list.has_next %}
+                <a href="?page={{ article_list.next_page_number }}" class="item">
+                    <i class="icon red right arrow"></i>
+                </a>
+            {% else %}
+                <a href="?page={{ article_list.end_index }}" class="disabled item">
+                    <i class="icon right arrow"></i>
+                </a>
+            {% endif %}
 
-            <a href="#" class="item">
-                <i class="icon red left arrow"></i>
-            </a>
-
-            <a href="#" class="item">
-                <i class="icon red right arrow"></i>
-            </a>
         </div>
     </div>
 </body>
