@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from firstapp.views import index, detail, detail_comment
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('index/', index, name='index'),
+    path('detail/<int:page_num>', detail, name='detail'),
+    path('detail/<int:page_num>/comment', detail_comment, name='comment'),
 ]

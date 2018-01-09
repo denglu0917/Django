@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load staticfile %}
+{% load staticfiles %}
 <html>
 
 <head>
@@ -40,7 +40,7 @@
     </div>
     <div class="ui inverted segment container nav">
         <div class="ui  three borderless  item  menu">
-            <a class="item">
+            <a class="active item">
                         All
                     </a>
             <a class="item">
@@ -48,7 +48,7 @@
                     </a>
 
 
-            <a class="active item" href="#list/editors">
+            <a class="item" href="#list/editors">
                         Editor's
                     </a>
 
@@ -63,13 +63,13 @@
         <div class="ui three column grid">
             {% for article in article_list %}
                 <div class="column">
-                    <a class="ui fluid card" href="#detail/215">
+                    <a class="ui fluid card" href="{% url 'detail' article.id %}">
                         <div class="image">
                             <img src="{{ article.img }}" alt="" style="height:200px;object-fit: cover;">
                         </div>
                     </a>
 
-                    <div class="title header" href="/detail/215">
+                    <div class="title header" href="{% url 'detail' article.id %}">
                         {{article.title}}
                     </div>
 
