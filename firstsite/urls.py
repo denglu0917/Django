@@ -15,7 +15,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+from firstapp.views import index, detail, detail_comment, index_login, index_register, detail_vote
+from django.contrib.auth.views import logout
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('index/', index, name='index'),
+    path('index/<str:cate>', index, name='index'),
+    path('login/', index_login, name='login'),
+    path('register/', index_register, name='register'),
+    path('logout/', logout, {'next_page': '/index'}, name='logout'),
+    path('detail/<int:page_num>', detail, name='detail'),
+    path('detail/vote/<int:page_num>', detail_vote, name='vote'),
+    path('detail/<int:page_num>/comment', detail_comment, name='comment'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
